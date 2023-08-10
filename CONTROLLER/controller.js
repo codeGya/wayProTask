@@ -31,6 +31,12 @@ module.exports.updateCategory = async (req, res, next) => {
 
 module.exports.deleteCategory = async (req, res, next) => {
   let productToDelete = req.query.product;
+  const productExistInDatabaseOrNot = await Category.findAll({
+    where: { product: productToDelete },
+  });
+  if (productExistInDatabaseOrNot.length === 0) {
+    res.status(400).send("No such product exist in Database");
+  }
 
   await Category.destroy({ where: { product: productToDelete } });
   res.status(200).send("Product Deleted successfully from Database");
